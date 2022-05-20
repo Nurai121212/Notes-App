@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState , useEffect} from 'react';
+import ItemList from './components/ItemList';
+import Form from './components/Form';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+function App(){
+  const[posts, setPosts] = useState(() => {
+    const initialValue = JSON.parse(localStorage.getItem("posts"));
+    return initialValue || "";
+  })
+  
+  const createPost = (newPost) => {
+    setPosts([...posts, newPost])
+  };
+
+  useEffect(() => {
+    localStorage.setItem("posts", JSON.stringify(posts))
+  }, [posts])
+
+  const removePost = (post) => {
+    setPosts(posts.filter(p => p.id !== post.id))
+  };
+
+  return(
+    <div>
+      <Form create={createPost}/>
+      {posts.length ? <ItemList remove={removePost} posts={posts}/>
+      : <div>
+          <h1 style={{textAlign: 'center'}}>Empty List</h1>
+        </div>
+      }
     </div>
-  );
+  )
 }
 
 export default App;
